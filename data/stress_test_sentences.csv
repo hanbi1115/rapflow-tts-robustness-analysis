@@ -1,0 +1,41 @@
+﻿category,item_id,text,purpose
+short,1,Good morning.,"Very short, simple sentence"
+short,2,I need some water.,Short declarative sentence
+short,3,Please close the door.,Short command
+short,4,The train is late.,Short sentence with common words
+short,5,She smiled at me.,Short sentence with simple rhythm
+long,1,"Although the weather looked clear in the morning, a sudden storm arrived in the afternoon and forced everyone to change their plans.",Long sentence with multiple clauses
+long,2,"The researcher carefully reviewed the experimental results, compared them with earlier studies, and wrote down several questions for the next meeting.",Long sentence with list structure
+long,3,"When the final presentation ended, the students packed their laptops, checked the remaining tasks, and discussed how they could improve the project before submission.",Long multi-clause sentence
+long,4,"Because the model had been trained on a large collection of speech recordings, it could generate fluent sentences even when the input contained several complex phrases.",Long technical sentence
+long,5,"After spending the entire evening debugging the program, I finally discovered that a single incorrect path was responsible for most of the errors.",Long causal sentence
+numbers,1,The meeting starts at 3:45 p.m.,Time expression
+numbers,2,The temperature rose from 18 degrees to 27 degrees.,Two numbers in one sentence
+numbers,3,The experiment was repeated 16 times on 3 different sentences.,Multiple cardinal numbers
+numbers,4,"In 2026, the team collected 1,250 audio samples.",Year and comma-formatted number
+numbers,5,The final score was 98.7 percent.,Decimal number and percentage
+abbreviations,1,NASA launched a new satellite.,Common acronym
+abbreviations,2,The CEO met the R and D team.,Multiple abbreviations
+abbreviations,3,The GPU processed the audio faster than the CPU.,Technical abbreviations
+abbreviations,4,The model uses TTS and ASR in the same pipeline.,Speech technology abbreviations
+abbreviations,5,The PDF file contains an FAQ section.,Common letter abbreviations
+rare_words,1,The archaeologist examined the hieroglyphic inscription.,Rare multisyllabic words
+rare_words,2,The phenomenon was unexpectedly ubiquitous.,Uncommon academic vocabulary
+rare_words,3,She studied electroencephalography at the laboratory.,Very long technical word
+rare_words,4,The mathematician discussed eigenvectors and diffeomorphisms.,Technical mathematical vocabulary
+rare_words,5,The ornithologist photographed a particularly iridescent bird.,Rare professional and descriptive words
+repetition,1,Very very very good.,Repeated adjective
+repetition,2,"No no no, that is not what I said.",Repeated short word
+repetition,3,I really really really want to know.,Repeated adverb
+repetition,4,Go go go go go.,Five repeated tokens
+repetition,5,"The test was hard, hard, hard, but fair.",Repeated word with punctuation
+prosody,1,Are you coming with us?,Question intonation
+prosody,2,Watch out!,Short exclamation
+prosody,3,"Wait, what just happened?",Comma plus question
+prosody,4,Really? You finished already?,Two questions with conversational prosody
+prosody,5,Stop! Do not touch that machine!,Multiple exclamations
+tongue_twister,1,She sells seashells by the seashore.,Classic s/sh contrast
+tongue_twister,2,Peter Piper picked a peck of pickled peppers.,Repeated p sounds
+tongue_twister,3,"Red lorry, yellow lorry, red lorry, yellow lorry.",Alternating consonant clusters
+tongue_twister,4,A proper copper coffee pot.,Repeated consonant transitions
+tongue_twister,5,Six sleek swans swam swiftly southwards.,Dense s and sw sounds

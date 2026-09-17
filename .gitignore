@@ -1,0 +1,41 @@
+# Model checkpoints / large assets
+checkpoints/
+hifigan/weights/
+*.pth
+*.pt
+*.ckpt
+
+# Generated audio
+day*_*/
+stress_test_audio/
+*.wav
+!samples/*.wav
+
+# Generated analysis outputs
+day3_speed/
+day4_quality/
+day5_analysis/
+day6_blind/
+day8_stress_test/
+day9_stress_analysis/
+day10_visualization/
+day11_blind_case_review/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local temp / secrets
+.env
+*.log

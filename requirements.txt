@@ -1,0 +1,11 @@
+# Core analysis
+numpy
+pandas
+scipy
+matplotlib
+librosa
+jiwer
+openai-whisper
+
+# RapFlow-TTS runtime dependencies should follow the official RapFlow-TTS repository.
+# Keep the original project's dependency versions for torch / diffusers / phonemizer / vocoder.
