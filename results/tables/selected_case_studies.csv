@@ -1,0 +1,6 @@
+﻿category,item_id,text,1,2,4,8,16,wer_gap_nfe1_minus_nfe16,wer_range
+repetition,4,Go go go go go.,0.0,0.0,0.2,1.2,0.0,0.0,1.2
+tongue_twister,1,She sells seashells by the seashore.,0.3333333333333333,0.0,0.0,0.0,0.0,0.3333333333333333,0.3333333333333333
+tongue_twister,3,"Red lorry, yellow lorry, red lorry, yellow lorry.",0.5,0.5,0.5,0.25,0.5,0.0,0.25
+rare_words,4,The mathematician discussed eigenvectors and diffeomorphisms.,0.1666666666666666,0.3333333333333333,0.3333333333333333,0.3333333333333333,0.3333333333333333,-0.1666666666666666,0.1666666666666667
+repetition,5,"The test was hard, hard, hard, but fair.",0.0,0.0,0.125,0.125,0.125,-0.125,0.125
