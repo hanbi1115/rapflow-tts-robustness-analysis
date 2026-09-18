@@ -1,93 +1,34 @@
 # RapFlow-TTS Few-Step Robustness Analysis
 
-## 1. Project Overview
+> A small-scale robustness study of few-step inference in **RapFlow-TTS**, focusing on speed, intelligibility, stress-test inputs, and the gap between ASR-based evaluation and human listening.
 
-This project studies how robust **few-step inference** is in RapFlow-TTS across different types of text inputs.
+## Background
 
-RapFlow-TTS is designed to generate high-quality speech with a small number of sampling steps. Instead of simply reproducing the original paper's average performance results, this project asks a more specific question:
+This project builds on **RapFlow-TTS: Rapid and High-Fidelity Text-to-Speech with Improved Consistency Flow Matching** (Interspeech 2025), co-authored by Hyun Joon Park, Jeongmin Liu, Jin Sob Kim, Jeong Yeol Yang, Sung Won Han, and Eunwoo Song.
+
+- Paper: https://www.isca-archive.org/interspeech_2025/park25b_interspeech.html
+- Official implementation: https://github.com/naver-ai/RapFlow-TTS
+
+RapFlow-TTS is designed to synthesize high-quality speech with fewer generation steps. Rather than re-testing only the paper's average performance, this project asks:
 
 > **Does few-step TTS remain stable across different input conditions, including difficult or unusual sentences?**
 
-The experiment compares sampling steps (`NFE = 1, 2, 4, 8, 16`) across both ordinary and stress-test inputs.
+This is an independent analysis project using the official pretrained RapFlow-TTS model.
 
 ---
 
-## 2. Research Questions
+## Key Findings
 
-1. How does increasing NFE affect inference speed?
-2. Does intelligibility improve consistently as NFE increases?
-3. Are some input types more sensitive to low-step generation than others?
-4. Do ASR-based metrics such as WER agree with human listening judgments?
+Across a 40-sentence stress test with 5 sampling-step settings (`1, 2, 4, 8, 16`):
 
----
+- **Lower NFE was faster**, as expected.
+- Increasing NFE did **not** consistently reduce Whisper-based WER.
+- Difficult categories included **tongue twisters, rare words, abbreviations, and numbers**.
+- Some samples showed large ASR-WER changes across NFE settings.
+- However, a blind listening review found that those ASR differences were **not always audible as actual content errors**.
+- This suggests that **ASR-based WER alone is not sufficient for evaluating perceptual robustness in TTS**.
 
-## 3. Experimental Setup
-
-### Model
-- RapFlow-TTS
-- Pretrained LJSpeech checkpoint
-- HiFi-GAN vocoder
-
-### Sampling conditions
-- NFE: `1, 2, 4, 8, 16`
-
-### Baseline experiment
-Three ordinary English sentences were synthesized at each NFE.
-
-### Stress-test experiment
-40 sentences were divided into 8 categories:
-
-- short
-- long
-- numbers
-- abbreviations
-- rare words
-- repetition
-- prosody
-- tongue twisters
-
-Each sentence was synthesized at 5 NFE settings, producing **200 stress-test audio samples**.
-
----
-
-## 4. Metrics
-
-### Speed
-- Model inference time
-- Total synthesis time
-- Real-Time Factor (RTF)
-
-\[
-RTF = \frac{\text{synthesis time}}{\text{audio duration}}
-\]
-
-Lower RTF means faster synthesis.
-
-### Automatic intelligibility
-- Whisper-based Word Error Rate (WER)
-
-Lower WER means the generated speech was transcribed more accurately.
-
-### Acoustic descriptors
-- F0
-- RMS energy
-- voiced ratio
-- spectral centroid
-
-### Human evaluation
-Blind listening tests measured:
-- word content
-- pronunciation
-- naturalness
-- obvious audible errors
-
----
-
-## 5. Main Results
-
-### 5.1 Speed increases with NFE
-
-Across the 40-sentence stress test:
+### Overall NFE results
 
 | NFE | Mean WER | Mean RTF |
 |---:|---:|---:|
@@ -97,13 +38,134 @@ Across the 40-sentence stress test:
 | 8 | 0.1078 | 0.1200 |
 | 16 | 0.0840 | 0.1575 |
 
-NFE 1 was the fastest setting. Increasing NFE consistently increased computational cost.
+---
 
-However, WER did **not** improve monotonically as NFE increased.
+## Main Figures
+
+### 1. Speed vs sampling steps
+
+![NFE vs RTF](results/figures/overall_nfe_vs_rtf.png)
+
+### 2. Intelligibility vs sampling steps
+
+![NFE vs WER](results/figures/overall_nfe_vs_wer.png)
+
+### 3. Input-category difficulty
+
+![Mean WER by category](results/figures/mean_wer_by_category.png)
+
+### 4. Category × NFE robustness
+
+![Category-NFE WER heatmap](results/figures/category_nfe_wer_heatmap.png)
+
+> The figures above will render after the corresponding PNG files are added to `results/figures/`.
 
 ---
 
-## 6. Robustness Across Input Categories
+## Research Questions
+
+1. How does the number of sampling steps affect inference speed?
+2. Does intelligibility improve consistently as sampling steps increase?
+3. Are some input types more sensitive to few-step inference than others?
+4. Do ASR-based metrics such as WER agree with human listening judgments?
+
+---
+
+## Experimental Setup
+
+### Model
+
+- **RapFlow-TTS**
+- Official pretrained **LJSpeech** checkpoint
+- **HiFi-GAN** vocoder
+- English single-speaker synthesis
+
+### Sampling settings
+
+```text
+NFE / sampling steps = 1, 2, 4, 8, 16
+```
+
+### Baseline experiment
+
+Three ordinary English sentences were synthesized at each NFE setting to verify the basic speed-quality behavior.
+
+### Stress-test experiment
+
+A 40-sentence set was created across 8 categories:
+
+| Category | Purpose |
+|---|---|
+| short | simple, short utterances |
+| long | multi-clause long sentences |
+| numbers | years, decimals, times, percentages |
+| abbreviations | NASA, GPU, CPU, TTS, ASR, etc. |
+| rare_words | uncommon / technical vocabulary |
+| repetition | repeated tokens or phrases |
+| prosody | questions, exclamations, punctuation |
+| tongue_twister | dense or difficult phonetic patterns |
+
+Each sentence was synthesized at 5 NFE settings:
+
+```text
+40 sentences × 5 NFE settings = 200 audio samples
+```
+
+The input set is available in:
+
+```text
+data/stress_test_sentences.csv
+```
+
+---
+
+## Evaluation
+
+### Speed
+
+I measured:
+
+- model inference time
+- total synthesis time
+- Real-Time Factor (RTF)
+
+```text
+RTF = synthesis time / generated audio duration
+```
+
+Lower RTF means faster-than-real-time synthesis.
+
+### Automatic intelligibility
+
+Generated audio was transcribed with Whisper and compared against the input text using **Word Error Rate (WER)**.
+
+Lower WER indicates better transcription agreement.
+
+### Acoustic descriptors
+
+The baseline experiment also examined:
+
+- F0
+- RMS energy
+- voiced ratio
+- spectral centroid
+
+These were used as descriptive acoustic features, not as direct perceptual-quality scores.
+
+### Blind listening
+
+The most NFE-sensitive cases identified by Whisper WER were re-evaluated with a blind listening test.
+
+The listener scored:
+
+- word-content preservation
+- pronunciation
+- naturalness
+- obvious audible errors
+
+---
+
+## Stress-Test Results
 
 The most difficult categories by average Whisper WER included:
 
@@ -112,37 +174,39 @@ The most difficult categories by average Whisper WER included:
 - abbreviations
 - numbers
 
-Meanwhile, the long-sentence category achieved an average WER of 0 in this experiment.
+The **long-sentence** category achieved an average WER of 0 in this experiment.
 
-Importantly, categories such as abbreviations showed nearly identical WER across NFE settings. This suggests that some errors may be related to text pronunciation or ASR behavior rather than insufficient sampling steps.
-
----
-
-## 7. NFE-Sensitive Cases
-
-Several sentences showed relatively large WER changes across NFE settings:
-
-- `Go go go go go.`
-- `She sells seashells by the seashore.`
-- `Red lorry, yellow lorry, red lorry, yellow lorry.`
-- `The mathematician discussed eigenvectors and diffeomorphisms.`
-- `The test was hard, hard, hard, but fair.`
-
-For example:
-
-`She sells seashells by the seashore.`
-
-showed a higher WER at NFE 1, while higher-NFE versions were transcribed correctly.
-
-However, automatic WER alone was not enough to determine whether these differences represented genuine perceptual errors.
+An important observation was that some categories, such as abbreviations, showed similar error rates across NFE settings. This suggests that not every transcription error is caused by insufficient sampling steps.
 
 ---
 
-## 8. Blind Listening Validation
+## Case Studies
 
-The five most NFE-sensitive cases were evaluated in a blind listening test.
+Several utterances showed relatively large Whisper-WER variation across NFE settings:
 
-Average ratings by NFE:
+```text
+Go go go go go.
+
+She sells seashells by the seashore.
+
+Red lorry, yellow lorry, red lorry, yellow lorry.
+
+The mathematician discussed eigenvectors and diffeomorphisms.
+
+The test was hard, hard, hard, but fair.
+```
+
+For example, `She sells seashells by the seashore.` had a higher WER at NFE 1 while higher-NFE versions were transcribed correctly.
+
+However, this raised an important question:
+
+> Was the TTS output actually worse, or did Whisper simply recognize it differently?
+
+---
+
+## Blind Listening Validation
+
+The five most NFE-sensitive cases were evaluated without revealing the NFE condition.
 
 | NFE | Word Content | Pronunciation | Naturalness |
 |---:|---:|---:|---:|
@@ -152,66 +216,138 @@ Average ratings by NFE:
 | 8 | 5.0 | 2.6 | 2.6 |
 | 16 | 5.0 | 2.6 | 2.6 |
 
-The intended word content was preserved across all NFE settings in the evaluated cases.
+The intended word content was preserved across all evaluated NFE settings.
 
-The large WER differences observed in some samples were therefore not clearly reproduced as audible content errors in the blind listening test.
+Therefore, large differences in Whisper WER were **not consistently reproduced as audible content errors**.
 
-This suggests that **Whisper-based WER can be sensitive to ASR recognition behavior and may not perfectly reflect perceptual TTS robustness**.
+This is one of the main takeaways of the project:
 
----
-
-## 9. Interpretation
-
-The experiments suggest three main findings.
-
-### Finding 1
-Few-step inference remained surprisingly stable across a wide range of inputs.
-
-### Finding 2
-Increasing NFE increased inference cost, but did not consistently improve intelligibility.
-
-### Finding 3
-Automatic WER and human perception did not always agree.
-
-Some inputs produced large differences in Whisper WER despite sounding correct to a human listener.
-
-Therefore, robustness evaluation for few-step TTS should not rely on ASR-based WER alone.
+> **ASR-based WER can be useful for screening TTS outputs, but it may not perfectly reflect human-perceived robustness.**
 
 ---
 
-## 10. Limitations
+## Reproducibility
 
-This project has several limitations:
+### Important note
+
+This repository contains the **experiment and analysis scripts**, but it does not redistribute the RapFlow-TTS model code, pretrained checkpoints, or HiFi-GAN weights.
+
+The scripts are intended to be run **inside a working clone of the official RapFlow-TTS repository**.
+
+### 1. Clone the official implementation
+
+```bash
+git clone https://github.com/naver-ai/RapFlow-TTS.git
+cd RapFlow-TTS
+```
+
+### 2. Set up RapFlow-TTS
+
+Follow the official repository instructions to install dependencies and download:
+
+- RapFlow-TTS checkpoint
+- HiFi-GAN weights
+- eSpeak / phonemizer dependencies
+
+The environment used for this project was based on:
+
+```text
+Python 3.9
+Conda environment: rapflow
+```
+
+### 3. Copy this project's files
+
+Place:
+
+```text
+scripts/
+data/
+```
+
+inside the RapFlow-TTS working directory.
+
+### 4. Run the experiment pipeline
+
+Example order:
+
+```bash
+python scripts/01_speed_benchmark.py
+python scripts/02_quality_eval.py
+python scripts/03_visualize_baseline.py
+python scripts/04_make_blind_test.py
+python scripts/05_generate_stress_test.py --sentences_csv data/stress_test_sentences.csv
+python scripts/06_analyze_stress_test.py
+python scripts/07_visualize_results.py
+python scripts/08_make_blind_case_review.py
+```
+
+Some paths in the scripts may need to be adjusted depending on where checkpoints and generated outputs are stored.
+
+---
+
+## Repository Structure
+
+```text
+rapflow-tts-robustness-analysis/
+├─ README.md
+├─ requirements.txt
+├─ .gitignore
+│
+├─ data/
+│  └─ stress_test_sentences.csv
+│
+├─ scripts/
+│  ├─ 01_speed_benchmark.py
+│  ├─ 02_quality_eval.py
+│  ├─ 03_visualize_baseline.py
+│  ├─ 04_make_blind_test.py
+│  ├─ 05_generate_stress_test.py
+│  ├─ 06_analyze_stress_test.py
+│  ├─ 07_visualize_results.py
+│  └─ 08_make_blind_case_review.py
+│
+├─ results/
+│  ├─ figures/
+│  └─ tables/
+│
+└─ samples/
+```
+
+---
+
+## Limitations
+
+This is a small-scale undergraduate research project, so the results should be interpreted cautiously.
 
 - Only one pretrained RapFlow-TTS checkpoint was tested.
-- The model was trained on LJSpeech and the experiment focused on English.
-- The stress-test set contained only 40 sentences.
+- Experiments were limited to English and the LJSpeech model.
+- The stress-test set contained 40 sentences.
 - Human evaluation was conducted by a single listener.
 - WER was computed using one Whisper model.
-- No formal perceptual metric such as MOS was collected from multiple participants.
-- Acoustic descriptors such as spectral centroid are not direct measures of perceptual speech quality.
+- No multi-participant MOS study was conducted.
+- Acoustic descriptors such as spectral centroid are not direct perceptual-quality metrics.
 
 ---
 
-## 11. Future Work
+## Future Work
 
 Possible extensions include:
 
-- increasing the number of stress-test sentences
-- using multiple human listeners
-- comparing different ASR models
-- evaluating multiple TTS models
-- testing multilingual speech
-- examining speaker-dependent effects
-- analyzing prosody and phoneme-level failures in more detail
+- larger and more systematically designed stress-test sets
+- multiple human evaluators
+- comparison across ASR models
+- comparison against other TTS systems
+- multilingual experiments
+- phoneme-level error analysis
+- more detailed prosody evaluation
+- speaker-dependent robustness analysis
 
 ---
 
-## 12. Project Takeaway
+## Takeaway
 
-This project began as a reproduction of RapFlow-TTS few-step inference and was extended into a robustness analysis.
+This project started as a reproduction of RapFlow-TTS few-step inference and was extended into a small robustness study.
 
-The main takeaway is:
-
-> **RapFlow-TTS preserved intelligible speech even at very low sampling steps for most tested inputs, while higher NFE increased computational cost without producing consistent improvements in intelligibility. In addition, ASR-based WER did not always match human perception, highlighting the importance of combining automatic and perceptual evaluation.**
+> **For the tested inputs, RapFlow-TTS preserved intelligible speech even at very low sampling steps, while increasing NFE raised computational cost without consistently improving intelligibility. The experiments also showed that ASR-based WER and human perception do not always agree, motivating the use of both automatic and perceptual evaluation when analyzing few-step TTS robustness.**
 
