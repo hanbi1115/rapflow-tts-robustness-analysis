@@ -58,7 +58,6 @@ Across a 40-sentence stress test with 5 sampling-step settings (`1, 2, 4, 8, 16`
 
 ![Category-NFE WER heatmap](results/figures/category_nfe_wer_heatmap.png)
 
-> The figures above will render after the corresponding PNG files are added to `results/figures/`.
 
 ---
 
